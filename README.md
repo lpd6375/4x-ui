@@ -319,6 +319,7 @@ Our platform offers compatibility with a diverse range of architectures and devi
 - Fixes API routes (user setting will be created with API)
 - Supports changing configs by different items provided in the panel.
 - Supports export/import database from the panel
+- Supports Wireguard subscription configuration
 
 
 ## Default Panel Settings

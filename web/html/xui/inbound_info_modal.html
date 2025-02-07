@@ -439,8 +439,30 @@
               </tr-info-row>
             </td>
           </tr>
+        </template>
       </table>
-    </template>
+      <template v-if="dbInbound.isWireguard">
+        <a-divider>Wireguard Subscription</a-divider>
+        <tr-info-row class="tr-info-row">
+          <tr-info-title class="tr-info-title">
+            <a-tag color="blue">Wireguard Config</a-tag>
+            <a-tooltip title='{{ i18n "copy" }}'>
+              <a-button size="small" icon="snippets" id="copy-wg-config" @click="copyToClipboard('copy-wg-config', infoModal.wgConfig)"></a-button>
+            </a-tooltip>
+          </tr-info-title>
+          <pre>[[ infoModal.wgConfig ]]</pre>
+        </tr-info-row>
+        <!-- Wireguard订阅链接 -->
+        <template v-if="inbound.protocol === 'wireguard'">
+          <a-form-item label="Wireguard订阅">
+            <a-input :value="wgSubLink" readonly>
+              <template #suffix>
+                <copy-outlined @click="copyToClipboard('copy-wg-sub', wgSubLink)" />
+              </template>
+            </a-input>
+          </a-form-item>
+        </template>
+      </template>
     </template>
 </a-modal>
 <script>
@@ -471,6 +493,7 @@
     subLink: '',
     subJsonLink: '',
     clientIps: '',
+    wgConfig: '',
     show(dbInbound, index) {
       this.index = index;
       this.inbound = dbInbound.toInbound();
@@ -486,6 +509,7 @@
       }
       if (this.inbound.protocol == Protocols.WIREGUARD) {
         this.links = this.inbound.genInboundLinks(dbInbound.remark).split('\r\n')
+        this.wgConfig = this.inbound.genWireguardConfig(this.clientSettings);
       } else {
         this.links = this.inbound.genAllLinks(this.dbInbound.remark, app.remarkModel, this.clientSettings);
       }

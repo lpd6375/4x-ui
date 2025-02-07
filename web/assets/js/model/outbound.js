@@ -671,6 +671,8 @@ class Outbound extends CommonClass {
             case Protocols.Trojan:
             case 'ss':
                 return this.fromParamLink(link);
+            case Protocols.Wireguard:
+                return this.fromWireguardLink(data[1]);
             default:
                 return null;
         }
@@ -788,6 +790,35 @@ class Outbound extends CommonClass {
         // Remove '#' from url.hash
         remark = remark.length > 0 ? remark.substring(1) : 'out-' + protocol + '-' + port;
         return new Outbound(remark, protocol, settings, stream);
+    }
+
+    static fromWireguardLink(config) {
+        const lines = config.split('\n');
+        const settings = new Outbound.WireguardSettings();
+        lines.forEach(line => {
+            const [key, value] = line.split('=');
+            switch (key.trim()) {
+                case 'Address':
+                    settings.address = value.trim();
+                    break;
+                case 'PrivateKey':
+                    settings.secretKey = value.trim();
+                    break;
+                case 'PublicKey':
+                    settings.pubKey = value.trim();
+                    break;
+                case 'Endpoint':
+                    settings.peers[0].endpoint = value.trim();
+                    break;
+                case 'AllowedIPs':
+                    settings.peers[0].allowedIPs = value.trim().split(',');
+                    break;
+                case 'PersistentKeepalive':
+                    settings.peers[0].keepAlive = parseInt(value.trim());
+                    break;
+            }
+        });
+        return new Outbound('Wireguard', Protocols.Wireguard, settings);
     }
 }
 

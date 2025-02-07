@@ -985,3 +985,27 @@ func searchHost(headers interface{}) string {
 
 	return ""
 }
+
+func (s *SubService) GetWireguardSub(subId string) (string, error) {
+  // 获取配置 
+  config, err := s.getInboundConfig(subId)
+  if err != nil {
+    return "", err
+  }
+  
+  // 生成Wireguard配置
+  return s.genWireguardConfig(config), nil
+}
+
+r.GET("/sub/:subid/wg", func(c *gin.Context) {
+  subId := c.Param("subid") 
+  sub := service.NewSubService()
+  config, err := sub.GetWireguardSub(subId)
+  if err != nil {
+    c.String(400, err.Error())
+    return
+  }
+  c.String(200, config)
+})
+
+

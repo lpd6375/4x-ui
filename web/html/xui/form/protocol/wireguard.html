@@ -21,6 +21,13 @@
   <a-form-item label='No Kernel Tun'>
     <a-switch v-model="inbound.settings.noKernelTun"></a-switch>
   </a-form-item>
+  <a-form-item label="开启订阅">
+    <a-switch v-model="inbound.settings.subEnable" />
+  </a-form-item>
+
+  <a-form-item v-if="inbound.settings.subEnable" label="订阅路径">
+    <a-input v-model="inbound.settings.subPath" />
+  </a-form-item>
   <a-form-item label="Peers">
     <a-button icon="plus" type="primary" size="small" @click="inbound.settings.addPeer()"></a-button>
   </a-form-item>

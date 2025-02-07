@@ -1695,6 +1695,21 @@ class Inbound extends XrayCommonClass {
             clientStats: this.clientStats
         };
     }
+
+    // 生成Wireguard配置
+    genWireguardConfig(settings) {
+        const config = `[Interface]
+PrivateKey = ${settings.privateKey}
+Address = ${settings.address.join(',')}
+DNS = ${settings.dns || '8.8.8.8, 8.8.4.4'}
+
+[Peer]
+PublicKey = ${settings.publicKey}
+AllowedIPs = ${settings.allowedIPs || '0.0.0.0/0'}
+Endpoint = ${this.address}:${this.port}
+`;
+        return config;
+    }
 }
 
 Inbound.Settings = class extends XrayCommonClass {
